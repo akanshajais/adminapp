@@ -1,23 +1,32 @@
-import React from 'react';
+import React , {useEffect} from 'react';
 import './App.css';
-import {BrowserRouter as Router, Route,Routes} from 'react-router-dom';
+import { Route, Switch} from 'react-router-dom';
 import Home from './containers/Home'; 
 import Signin from './containers/Signin';
 import Signup from './containers/Signup';
-
-
-
+import PrivateRoute from './components/HOC/PrivateRoute';
+import {useDispatch, useSelector} from 'react-redux';
+import { isUserLoggedIn} from './actions';
 function App() {
+const dispatch = useDispatch();
+const auth = useSelector(state => state.auth)
+  
+  useEffect(() => {
+    if(!auth.authenticate){
+        dispatch(isUserLoggedIn());
+    }
+   
+}, []);
   return (
     <div className="App">
-      <Router>
-        <Routes>
-          <Route path="/" exact element={<Home />}/>
-          <Route path="/signup"  element={<Signup />}/>
-          <Route path="/signin" element={< Signin />}/>
+     
+        <Switch>
+          <PrivateRoute path="/" exact component={Home}/>
+          <Route path="/signup"  component={Signup}/>
+          <Route path="/signin" component={Signin}/>
 
-        </Routes>
-      </Router>
+        </Switch>
+    
   
 </div>
 );
